@@ -118,8 +118,8 @@ module TrackingNumber
   end
 
   class USPS13 < USPS
-    SEARCH_PATTERN = /(\b([A-Z]\s*){2,2}([0-9]\s*){9,9}([A-Z]\s*){2,2}\b)/
-    VERIFY_PATTERN = /^([A-Z]{2,2})([0-9]{9,9})([A-Z]{2,2})$/
+    SEARCH_PATTERN = /^(([A-Z]\s*{2,2})([0-9]\s*{9,9})(US))/
+    VERIFY_PATTERN = /^([A-Z]{2,2})([0-9]{9,9})(US)$/
 
     def matches
       self.tracking_number.scan(VERIFY_PATTERN).flatten

@@ -42,6 +42,7 @@ module TrackingNumber
   class CanadaPost16 < CanadaPost
     SEARCH_PATTERN = /(([0-9]\s*){16,16})/
     VERIFY_PATTERN = /([0-9]{15,15})([0-9]{1})/
+    LENGTH = 16 
 
     def matches
       self.tracking_number.scan(VERIFY_PATTERN).flatten
@@ -60,23 +61,36 @@ module TrackingNumber
   end
 
   class CanadaPost13 < CanadaPost
-    SEARCH_PATTERN = /^(([A-Z]){2,2}([0-9]\s*){9,9}([A-Z]){2,2})/
-    VERIFY_PATTERN = /^([A-Z]{2,2})([0-9]{8,8})([0-9]{1})([A-Z]{2})$/
+    SEARCH_PATTERN = /(([A-Z]\s*){2}([0-9]\s*){9}([A-Z]\s*){2})/
+    VERIFY_PATTERN = /([A-Z]{2})([0-9]{8})([0-9]{1})([A-Z]{2})/
+    LENGTH = 13
+
+    def matches
+      self.tracking_number.scan(VERIFY_PATTERN).flatten
+    end
+
 
     def valid_checksum?
-      puts "der"
-      puts decode
-    end
+      prefix, digits, check_digit, country = matches
 
-    def decode
-      puts "her"
-      {:prefix => self.tracking_number.to_s.slice(0...2),
-       :serial_number =>  self.tracking_number.to_s.slice(2...9),
-       :check_digit => self.tracking_number.to_s.slice(9...10),
-       :country_code =>  self.tracking_number.to_s.slice(11...13),
-       :check_digit => self.tracking_number.slice(21...22)
-      }
+      chars = digits.chars.to_a
+
+      sum = 0
+      chars.zip([8,6,4,2,3,5,9,7]).each do |pair|
+        sum += (pair[0].to_i * pair[1].to_i)
+      end
+
+      remainder = sum % 11
+      check = case remainder
+      when 1
+        0
+      when 0
+        5
+      else
+        11 - remainder
+      end
+
+      return check == check_digit.to_i
     end
   end
-
 end
