@@ -9,6 +9,7 @@ require 'tracking_number/fedex'
 require 'tracking_number/ups'
 require 'tracking_number/dhl'
 require 'tracking_number/ontrac'
+require 'tracking_number/china_post'
 require 'tracking_number/canada_post'
 
 if defined?(ActiveModel::EachValidator)
@@ -16,7 +17,7 @@ if defined?(ActiveModel::EachValidator)
 end
 
 module TrackingNumber
-  TYPES = [UPS, UPSTest, FedExExpress, FedExSmartPost, FedExGround, FedExGround18, FedExGround96, USPS91, USPS20, USPS13, USPSTest, DHLExpress, DHLExpressAir, OnTrac, CanadaPost16, CanadaPost13]
+  TYPES = [UPS, UPSTest, FedExExpress, FedExSmartPost, FedExGround, FedExGround18, FedExGround96, USPS91, USPS20, USPS13, USPSTest, DHLExpress, DHLExpressAir, OnTrac,ChinaPostAirMail, CanadaPost16, CanadaPost13]
 
   def self.search(body)
     TYPES.collect { |type| type.search(body) }.flatten
